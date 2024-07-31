@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -14,15 +14,17 @@ import ArticleTile from './components/ArticleTile'
 import ReadArticle from './components/ReadArticle';
 
 
-const { width, height } = Dimensions.get('window');
-
 export default function App() {
+  const { width, height } = Dimensions.get('window');
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const slideAnim = useRef(new Animated.Value(height)).current;
 
   const articles = useArticleStore((state) => state.articles);
   const fetch = useArticleStore((state) => state.fetchArticles);
-  fetch();
+  
+  useEffect(() => {
+    fetch();
+  }, [])
 
   const slideUp = () => {
     Animated.timing(slideAnim, {

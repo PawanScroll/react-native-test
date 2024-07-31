@@ -1,5 +1,6 @@
 import { View, StatusBar, Text, StyleSheet, Image, Dimensions, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { format } from 'timeago.js';
 
 import { Article } from '../models/Article';
 
@@ -13,6 +14,7 @@ interface ArticleTileProps {
 export default function ArticleTile(props: ArticleTileProps) {
     const bgc = props.article.background_color;
     const backgroundColor = `rgb(${bgc.join(',')})`;
+    const AuthorText = `${props.article.authors[0].name} . ${format(props.article.authors[0].created, 'en-IN')}`;
     return (
         <TouchableOpacity onPress={props.onPress} style={[styles.slide, { backgroundColor }]}>
             <View style={styles.imageContainer}>
@@ -29,9 +31,10 @@ export default function ArticleTile(props: ArticleTileProps) {
                 />
             </View>
             <View style={styles.textContainer}>
+                <Text style={styles.topicTitle}>{props.article.topic.title}</Text>
                 <Text style={styles.title}>{props.article.title}</Text>
                 <Text style={styles.subtitle}>{props.article.summary}</Text>
-                <Text style={styles.author}>{props.article.authors[0].name}</Text>
+                <Text style={styles.authorText}>{AuthorText}</Text>
                 <TouchableOpacity style={styles.shareButton}>
                     <Text style={styles.shareText}>Share this story</Text>
                 </TouchableOpacity>
@@ -59,31 +62,42 @@ const styles = StyleSheet.create({
         resizeMode: 'cover',
     },
     textContainer: {
-        marginTop: -200,
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
+        flex: 1.2,
+        padding: 20,
+        alignItems: 'baseline',
+        justifyContent: 'flex-start',
+    },
+    topicTitle: {
+        fontSize: 18,
+        color: '#fff',
+        fontWeight: '800',
+        paddingBottom: 10,
+        textTransform: 'uppercase',
+        textDecorationLine: 'underline'
     },
     title: {
-        fontSize: 32,
+        fontSize: 30,
         fontWeight: 'bold',
-        textAlign: 'center',
+        color: '#fff',
         marginBottom: 10,
     },
     subtitle: {
         fontSize: 16,
-        textAlign: 'center',
-        marginBottom: 10,
+        color: '#eef2e8',
+        marginBottom: 25,
     },
-    author: {
+    authorText: {
         fontSize: 14,
         color: 'gray',
         marginBottom: 20,
     },
     shareButton: {
-        backgroundColor: '#000',
-        padding: 10,
-        borderRadius: 5,
+        backgroundColor: 'hsla(0,0%,100%,.1)',
+        padding: 20,
+        position: 'absolute',
+        bottom: 60,
+        left: width /3,
+        borderRadius: 30,
     },
     shareText: {
         color: '#fff',
