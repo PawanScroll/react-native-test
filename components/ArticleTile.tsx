@@ -1,6 +1,12 @@
 import { View, StatusBar, Text, StyleSheet, Image, Dimensions, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { format } from 'timeago.js';
+import {
+    useFonts,
+    Poppins_700Bold,
+    Poppins_300Light,
+    Poppins_500Medium
+} from '@expo-google-fonts/poppins'
 
 import { Article } from '../models/Article';
 
@@ -12,34 +18,41 @@ interface ArticleTileProps {
 }
 
 export default function ArticleTile(props: ArticleTileProps) {
+
+
+    let [fontsLoaded] = useFonts({ Poppins_700Bold, Poppins_300Light, Poppins_500Medium });
+
+
     const bgc = props.article.background_color;
     const backgroundColor = `rgb(${bgc.join(',')})`;
     const AuthorText = `${props.article.authors[0].name} . ${format(props.article.authors[0].created, 'en-IN')}`;
     return (
-        <TouchableOpacity onPress={props.onPress} style={[styles.slide, { backgroundColor }]}>
-            <View style={styles.imageContainer}>
-                <Image source={{ uri: props.article.cover.large }} style={styles.image} />
-                <LinearGradient
-                    colors={[
-                        `rgba(${bgc.join(',')}, 0)`,
-                        `rgba(${bgc.join(',')}, 0)`,
-                        `rgba(${bgc.join(',')}, 0)`,
-                        `rgba(${bgc.join(',')}, 0.5)`,
-                        `rgba(${bgc.join(',')}, 1)`,
-                    ]}
-                    style={styles.gradient}
-                />
-            </View>
-            <View style={styles.textContainer}>
-                <Text style={styles.topicTitle}>{props.article.topic.title}</Text>
-                <Text style={styles.title}>{props.article.title}</Text>
-                <Text style={styles.subtitle}>{props.article.summary}</Text>
-                <Text style={styles.authorText}>{AuthorText}</Text>
-                <TouchableOpacity style={styles.shareButton}>
-                    <Text style={styles.shareText}>Share this story</Text>
-                </TouchableOpacity>
-            </View>
-        </TouchableOpacity>
+        fontsLoaded ?
+            <TouchableOpacity onPress={props.onPress} style={[styles.slide, { backgroundColor }]}>
+                <View style={styles.imageContainer}>
+                    <Image source={{ uri: props.article.cover.large }} style={styles.image} />
+                    <LinearGradient
+                        colors={[
+                            `rgba(${bgc.join(',')}, 0)`,
+                            `rgba(${bgc.join(',')}, 0)`,
+                            `rgba(${bgc.join(',')}, 0)`,
+                            `rgba(${bgc.join(',')}, 0.5)`,
+                            `rgba(${bgc.join(',')}, 1)`,
+                        ]}
+                        style={styles.gradient}
+                    />
+                </View>
+                <View style={styles.textContainer}>
+                    <Text style={styles.topicTitle}>{props.article.topic.title}</Text>
+                    <Text style={styles.title}>{props.article.title}</Text>
+                    <Text style={styles.subtitle}>{props.article.summary}</Text>
+                    <Text style={styles.authorText}>{AuthorText}</Text>
+                    <TouchableOpacity style={styles.shareButton}>
+                        <Text style={styles.shareText}>Share this story</Text>
+                    </TouchableOpacity>
+                </View>
+            </TouchableOpacity>
+            : <Text>Loading</Text>
     );
 }
 
@@ -62,44 +75,49 @@ const styles = StyleSheet.create({
         resizeMode: 'cover',
     },
     textContainer: {
-        flex: 1.2,
+        flex: 1.5,
         padding: 20,
         alignItems: 'baseline',
         justifyContent: 'flex-start',
     },
     topicTitle: {
-        fontSize: 18,
-        color: '#fff',
-        fontWeight: '800',
+        fontSize: 16,
+        color: '#f8f7ff',
+        fontFamily: 'Poppins_300Light',
         paddingBottom: 10,
         textTransform: 'uppercase',
         textDecorationLine: 'underline'
     },
     title: {
         fontSize: 30,
-        fontWeight: 'bold',
+        fontFamily: 'Poppins_700Bold',
+        // fontWeight: 'bold',
         color: '#fff',
         marginBottom: 10,
     },
     subtitle: {
-        fontSize: 16,
-        color: '#eef2e8',
+        fontSize: 14,
+        fontFamily: 'Poppins_500Medium',
+        color: '#f8f7ff',
         marginBottom: 25,
     },
     authorText: {
         fontSize: 14,
-        color: 'gray',
+        fontFamily: 'Poppins_300Light',
+        color: '#f8f7ff',
         marginBottom: 20,
     },
     shareButton: {
         backgroundColor: 'hsla(0,0%,100%,.1)',
         padding: 20,
         position: 'absolute',
-        bottom: 60,
-        left: width /3,
+        bottom: 40,
+        left: width / 3,
         borderRadius: 30,
     },
     shareText: {
+        fontSize: 14,
+        fontFamily: 'Poppins_300Light',
         color: '#fff',
     },
 });

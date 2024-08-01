@@ -1,6 +1,13 @@
-import { View, Text, StyleSheet, Dimensions, Image, ScrollView, TouchableOpacity, Animated, PanResponder } from 'react-native';
-import { Article } from "../models/Article";
+import React, { useRef } from 'react';
+import {
+    StyleSheet,
+    Dimensions,
+    Animated,
+    PanResponder
+} from 'react-native';
+import { WebView } from 'react-native-webview';
 
+import { Article } from "../models/Article";
 
 const { height } = Dimensions.get('window');
 
@@ -11,8 +18,20 @@ interface ReadArticleProps {
 }
 
 export default function ReadArticle(props: ReadArticleProps) {
+    const panResponder = useRef(
+        PanResponder.create({
+            onMoveShouldSetPanResponder: (_, gestureState) => {
+                return gestureState.dy > 20;
+            },
+            onPanResponderRelease: (_, gestureState) => {
+                if (gestureState.dy > 50) props.slideDown();
+            },
+        })
+    ).current;
+
     return (
         <Animated.View
+            {...panResponder.panHandlers}
             style={[
                 styles.detailView,
                 {
@@ -20,15 +39,9 @@ export default function ReadArticle(props: ReadArticleProps) {
                 },
             ]}
         >
-            <View style={styles.detailContent}>
-                <Text style={styles.detailTitle}>{props.article.title}</Text>
-                <Text style={styles.detailText}>{props.article.summary}</Text>
-                <TouchableOpacity style={styles.closeButton} onPress={props.slideDown}>
-                    <Text style={styles.closeButtonText}>Close</Text>
-                </TouchableOpacity>
-            </View>
+            <WebView source={{ uri: `https://amp.scroll.in/article/${props.article.id}/abc?source=headlines` }}></WebView>
         </Animated.View>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
@@ -40,27 +53,5 @@ const styles = StyleSheet.create({
         height: height,
         backgroundColor: 'white',
         zIndex: 1000,
-    },
-    detailContent: {
-        flex: 1,
-        padding: 20,
-    },
-    detailTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 10,
-    },
-    detailText: {
-        fontSize: 16,
-        marginBottom: 20,
-    },
-    closeButton: {
-        backgroundColor: '#000',
-        padding: 10,
-        borderRadius: 5,
-    },
-    closeButtonText: {
-        color: '#fff',
-        textAlign: 'center',
-    },
+    }
 });

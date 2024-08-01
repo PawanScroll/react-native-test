@@ -1,10 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
+  Image,
   StyleSheet,
   Dimensions,
   ScrollView,
-  Animated
+  Animated,
+  Pressable,
+  Text,
 } from 'react-native';
 
 import { Article } from './models/Article';
@@ -12,16 +15,18 @@ import { useArticleStore } from './store/articleStore';
 
 import ArticleTile from './components/ArticleTile'
 import ReadArticle from './components/ReadArticle';
+import MenuModal from './components/MenuModal';
 
 
 export default function App() {
   const { width, height } = Dimensions.get('window');
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+  const [showModal, setShowModal] = useState(false);
   const slideAnim = useRef(new Animated.Value(height)).current;
 
   const articles = useArticleStore((state) => state.articles);
   const fetch = useArticleStore((state) => state.fetchArticles);
-  
+
   useEffect(() => {
     fetch();
   }, [])
@@ -42,9 +47,14 @@ export default function App() {
     }).start(() => setSelectedArticle(null));
   };
 
+  const onLogoPress = () => {
+    // Scroll to beginning
+    // fetch latest
+  }
+
   return (
-    <View style={styles.container}>
-      <ScrollView horizontal pagingEnabled style={styles.scrollContainer}>
+    <View>
+      <ScrollView horizontal pagingEnabled >
         {articles.map((item, index) => {
           return (
             <View key={index} style={{ width }}>
@@ -58,39 +68,58 @@ export default function App() {
           );
         })}
       </ScrollView>
-      {selectedArticle && 
-        <ReadArticle 
-          article={selectedArticle} 
+      <View style={styles.layout}>
+        <Pressable style={styles.logo} onPress={onLogoPress}>
+          <Image
+            style={styles.logoImage}
+            source={{ uri: 'https://scroll.in/static/assets/favicon.5f31c86209ff21c26b68aabf47772769.003.png' }}>
+          </Image>
+        </Pressable>
+        <Pressable
+          style={styles.menu}
+          onPress={() => { setShowModal(true) }}>
+          {/* TODO: Add icons */}
+          <Text>Menu</Text>
+        </Pressable>
+      </View>
+      {selectedArticle &&
+        <ReadArticle
+          article={selectedArticle}
           animHeight={slideAnim}
           slideDown={slideDown}
         />}
+      {showModal &&
+        <MenuModal
+          closeModal={() => setShowModal(false)}
+        />
+      }
     </View>
   );
 };
 
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
+  layout: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 170,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     alignItems: 'center',
-    padding: 10,
-    backgroundColor: '#fff',
+    paddingHorizontal: 40,
   },
   logo: {
-    width: 40,
-    height: 40,
-  },
-  drawerButton: {
-    padding: 10,
-  },
-  drawerText: {
-    fontSize: 24,
-  },
-  scrollContainer: {
     flex: 1,
+  },
+  logoImage: {
+    width: 30,
+    height: 30,
+    borderRadius: 5,
+  },
+  menu: {
+    flex: 1,
+    alignItems: 'flex-end',
   },
 });
