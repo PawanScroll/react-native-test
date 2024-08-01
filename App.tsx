@@ -22,7 +22,8 @@ export default function App() {
   const { width, height } = Dimensions.get('window');
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const slideAnim = useRef(new Animated.Value(height)).current;
+  const slideAnim = useRef(new Animated.Value(height));
+  const scrollRef = useRef<ScrollView | null>(null);
 
   const articles = useArticleStore((state) => state.articles);
   const fetch = useArticleStore((state) => state.fetchArticles);
@@ -32,7 +33,7 @@ export default function App() {
   }, [])
 
   const slideUp = () => {
-    Animated.timing(slideAnim, {
+    Animated.timing(slideAnim.current, {
       toValue: 0,
       duration: 300,
       useNativeDriver: true,
@@ -40,7 +41,7 @@ export default function App() {
   };
 
   const slideDown = () => {
-    Animated.timing(slideAnim, {
+    Animated.timing(slideAnim.current, {
       toValue: height,
       duration: 300,
       useNativeDriver: true,
@@ -48,13 +49,16 @@ export default function App() {
   };
 
   const onLogoPress = () => {
-    // Scroll to beginning
-    // fetch latest
+    scrollRef.current?.scrollTo({
+      x: 0,
+      animated: true
+    })
+    fetch();
   }
 
   return (
     <View>
-      <ScrollView horizontal pagingEnabled >
+      <ScrollView horizontal pagingEnabled ref={scrollRef}>
         {articles.map((item, index) => {
           return (
             <View key={index} style={{ width }}>
@@ -85,7 +89,7 @@ export default function App() {
       {selectedArticle &&
         <ReadArticle
           article={selectedArticle}
-          animHeight={slideAnim}
+          animHeight={slideAnim.current}
           slideDown={slideDown}
         />}
       {showModal &&

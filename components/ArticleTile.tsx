@@ -1,4 +1,4 @@
-import { View, StatusBar, Text, StyleSheet, Image, Dimensions, TouchableOpacity } from 'react-native';
+import { Share, View, StatusBar, Text, StyleSheet, Image, Dimensions, TouchableOpacity, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { format } from 'timeago.js';
 import {
@@ -47,9 +47,16 @@ export default function ArticleTile(props: ArticleTileProps) {
                     <Text style={styles.title}>{props.article.title}</Text>
                     <Text style={styles.subtitle}>{props.article.summary}</Text>
                     <Text style={styles.authorText}>{AuthorText}</Text>
-                    <TouchableOpacity style={styles.shareButton}>
+                    <Pressable
+                        style={styles.shareButton}
+                        onPress={() => {
+                            Share.share({
+                                message: props.article.title,
+                            })
+                        }}
+                    >
                         <Text style={styles.shareText}>Share this story</Text>
-                    </TouchableOpacity>
+                    </Pressable>
                 </View>
             </TouchableOpacity>
             : <Text>Loading</Text>
