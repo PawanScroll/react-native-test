@@ -4,7 +4,7 @@ import {
   Image,
   StyleSheet,
   Dimensions,
-  ScrollView,
+  FlatList,
   Animated,
   Pressable,
   Text,
@@ -23,10 +23,12 @@ export default function App() {
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [showModal, setShowModal] = useState(false);
   const slideAnim = useRef(new Animated.Value(height));
-  const scrollRef = useRef<ScrollView | null>(null);
+  const scrollRef = useRef<FlatList | null>(null);
 
   const articles = useArticleStore((state) => state.articles);
+  const isLoading = useArticleStore((state) => state.isLoading);
   const fetch = useArticleStore((state) => state.fetchArticles);
+  const udpate = useArticleStore((state) => state.updateArticles);
 
   useEffect(() => {
     fetch();
@@ -49,43 +51,53 @@ export default function App() {
   };
 
   const onLogoPress = () => {
-    scrollRef.current?.scrollTo({
-      x: 0,
+    scrollRef.current?.scrollToIndex({
+      index: 0,
       animated: true
-    })
+    });
     fetch();
   }
 
   return (
     <View>
-      <ScrollView horizontal pagingEnabled ref={scrollRef}>
-        {articles.map((item, index) => {
-          return (
-            <View key={index} style={{ width }}>
-              <ArticleTile
-                article={item}
-                onPress={() => {
-                  setSelectedArticle(item);
-                  slideUp();
-                }} />
-            </View>
-          );
-        })}
-      </ScrollView>
-      <View style={styles.layout}>
-        <Pressable style={styles.logo} onPress={onLogoPress}>
-          <Image
-            style={styles.logoImage}
-            source={{ uri: 'https://scroll.in/static/assets/favicon.5f31c86209ff21c26b68aabf47772769.003.png' }}>
-          </Image>
-        </Pressable>
-        <Pressable
-          style={styles.menu}
-          onPress={() => { setShowModal(true) }}>
-          {/* TODO: Add icons */}
-          <Text>Menu</Text>
-        </Pressable>
+      {!isLoading ? <View>
+        <FlatList
+          data={articles}
+          pagingEnabled={true}
+          horizontal={true}
+          ref={scrollRef}
+          onEndReached={udpate}
+          onEndReachedThreshold={5}
+          keyExtractor={article => String(article.index)}
+          renderItem={({ item }) => {
+            return (
+              <View style={{ width }}>
+                <ArticleTile
+                  article={item}
+                  onPress={() => {
+                    setSelectedArticle(item);
+                    slideUp();
+                  }} />
+              </View>
+            )
+          }}
+        />
+        <View style={styles.layout}>
+          <Pressable style={styles.logo} onPress={onLogoPress}>
+            <Image
+              style={styles.logoImage}
+              source={{ uri: 'https://scroll.in/static/assets/favicon.5f31c86209ff21c26b68aabf47772769.003.png' }}>
+            </Image>
+          </Pressable>
+          <Pressable
+            style={styles.menu}
+            onPress={() => { setShowModal(true) }}>
+            {/* TODO: Add icons */}
+            <Text>Menu</Text>
+          </Pressable>
+        </View>
       </View>
+        : <Text style={styles.loadingText}>Loading</Text>}
       {selectedArticle &&
         <ReadArticle
           article={selectedArticle}
@@ -126,4 +138,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'flex-end',
   },
+  loadingText: {
+    marginTop: 200,
+    textAlign: 'center',
+  }
 });
