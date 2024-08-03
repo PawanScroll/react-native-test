@@ -5,10 +5,10 @@ import {
     Modal,
     StyleSheet,
     Text,
+    ImageBackground,
     TouchableOpacity,
     Pressable
 } from 'react-native';
-
 
 interface MenuModalProps {
     closeModal: () => void
@@ -17,7 +17,11 @@ interface MenuModalProps {
 export default function MenuModal(props: MenuModalProps) {
     return (
         <Modal onRequestClose={props.closeModal} animationType='slide'>
-            <View style={styles.header}>
+            <ImageBackground
+                source={require('../assets/menu-bg.png')}
+                style={styles.header}
+                imageStyle={styles.imageBG}
+            >
                 <Pressable
                     style={styles.closeBtn}
                     onPress={props.closeModal}>
@@ -34,7 +38,7 @@ export default function MenuModal(props: MenuModalProps) {
                         in the world of politics, sports, entertainment and more.
                     </Text>
                 </View>
-            </View>
+            </ImageBackground>
 
             <View style={styles.links}>
                 <TouchableOpacity onPress={() => Linking.openURL('https://scroll.in/privacy')}>
@@ -56,7 +60,15 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         marginBottom: 40,
-        backgroundColor: '#fefae0'
+        backgroundColor: '#F0E6D6',
+        overflow: 'hidden'
+    },
+    imageBG: {
+        height: 800,
+        width: 800,
+        position: 'absolute',
+        top: -400,
+        left: 100
     },
     info: {
         alignItems: 'baseline',
@@ -73,7 +85,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 46,
         marginTop: 20,
-        fontWeight: 'bold',
+        fontWeight: '900',
         marginBottom: 10,
     },
     description: {

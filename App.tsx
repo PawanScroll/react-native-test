@@ -8,6 +8,7 @@ import {
   Animated,
   Pressable,
   Text,
+  StatusBar,
 } from 'react-native';
 
 import { Article } from './models/Article';
@@ -93,7 +94,7 @@ export default function App() {
             style={styles.menu}
             onPress={() => { setShowModal(true) }}>
             {/* TODO: Add icons */}
-            <Text>Menu</Text>
+            <Text style={styles.menuText}>☰</Text>
           </Pressable>
         </View>
       </View>
@@ -120,7 +121,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 170,
+    height: (StatusBar.currentHeight ?? 0) + 150,
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
@@ -128,15 +129,20 @@ const styles = StyleSheet.create({
   },
   logo: {
     flex: 1,
+    height: 80,
+    paddingVertical: 20
   },
   logoImage: {
-    width: 30,
-    height: 30,
-    borderRadius: 5,
+    width: 40,
+    height: 40,
+    borderRadius: 10,
   },
   menu: {
     flex: 1,
     alignItems: 'flex-end',
+  },
+  menuText: {
+    fontSize: 32
   },
   loadingText: {
     marginTop: 200,
